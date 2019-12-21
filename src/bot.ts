@@ -6,6 +6,11 @@ import { existsSync, writeFileSync, readFileSync } from "fs";
 
 const client = new Client();
 
+enum Channels {
+  General = "general-chat",
+  DMs = "dms"
+}
+
 const isTextChannel = (c: Channel): c is TextChannel => c.type === "text";
 
 function getWeather(): Weather {
@@ -19,9 +24,9 @@ function updateWeather(weather: Weather) {
   writeFileSync("./weather.json", JSON.stringify(generateWeather(weather)));
 }
 
-function messageGeneral(msg: string) {
+function messageChannel(channel: string, msg: string) {
   client.channels
-    .filter(c => isTextChannel(c) && c.name === "general-chat")
+    .filter(c => isTextChannel(c) && c.name === channel)
     .forEach((c: TextChannel) => {
       c.send(msg);
     });
@@ -29,9 +34,10 @@ function messageGeneral(msg: string) {
 
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
-  messageGeneral(messages.greeting);
-  messageGeneral(messages.help);
-  messageGeneral(translateWeather(getWeather()));
+  messageChannel(Channels.General, messages.thanks);
+  messageChannel(Channels.General, messages.help);
+  messageChannel(Channels.General, translateWeather(getWeather()));
+  messageChannel(Channels.DMs, messages.dmHelp);
 });
 
 client.on("message", msg => {
@@ -40,10 +46,21 @@ client.on("message", msg => {
   } else if (
     msg.content === "!updateweather" &&
     isTextChannel(msg.channel) &&
-    msg.channel.name === "dms"
+    msg.channel.name === Channels.DMs
   ) {
     updateWeather(getWeather());
-    messageGeneral(`Weather update: ` + translateWeather(getWeather()));
+    msg.reply("Weather updated!");
+    messageChannel(
+      Channels.General,
+      `Weather update: ` + translateWeather(getWeather())
+    );
+  } else if (msg.content === "!help") {
+    const reply =
+      messages.help +
+      (isTextChannel(msg.channel) && msg.channel.name === Channels.DMs
+        ? " " + messages.dmHelp
+        : "");
+    msg.reply(reply);
   }
 });
 
