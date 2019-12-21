@@ -1,0 +1,16 @@
+{
+  "name": "westgate-weather-service",
+  "version": "1.0.0",
+  "description": "Weather generator and announcement bot",
+  "main": "bot.js",
+  "author": "Jack Balbes",
+  "dependencies": {
+    "@types/node": "^12.12.20",
+    "discord.js": "^11.5.1",
+    "typescript": "^3.7.3"
+  },
+  "scripts": {
+    "start": "tsc && node dist/bot.js",
+    "test": "tsc && node dist/testSim.js"
+  }
+}
