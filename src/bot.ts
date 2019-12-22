@@ -34,10 +34,6 @@ function messageChannel(channel: string, msg: string) {
 
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
-  messageChannel(Channels.General, messages.thanks);
-  messageChannel(Channels.General, messages.help);
-  messageChannel(Channels.General, translateWeather(getWeather()));
-  messageChannel(Channels.DMs, messages.dmHelp);
 });
 
 client.on("message", msg => {
