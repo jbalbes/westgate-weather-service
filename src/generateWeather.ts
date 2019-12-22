@@ -64,17 +64,21 @@ export function translateWeather(weather: Weather) {
   let message = "";
   message += `The temperature range is currently ${
     TemperatureMap[weather.temperature]
-  }. `;
-  if (weather.precipitation != Precipitation.None) {
-    const type = weather.temperature > Temperature.Cold ? "snow" : "rain";
-    message += `Expect ${
+  }.`;
+  const type = weather.temperature > Temperature.Cold ? "snow" : "rain";
+  if (weather.precipitation === Precipitation.None) {
+    message += ` Expect clear skies`;
+  } else if (weather.precipitation < Precipitation.Heavy) {
+    message += ` Expect ${PrecipitationMap[weather.precipitation]} ${type}.`;
+  } else {
+    message += ` Expect ${
       PrecipitationMap[weather.precipitation]
-    } ${type} storms. `;
+    } ${type} storms.`;
   }
   if (weather.saturation != Saturation.Normal) {
     const level =
       weather.saturation < Saturation.Normal ? "a lack" : "an excess";
-    message += `Due to ${level} of precipitation, we are currently experiencing ${
+    message += ` Due to ${level} of precipitation, we are currently experiencing ${
       saturationMap[weather.saturation]
     }.`;
   }
