@@ -127,6 +127,21 @@ function generateTempChange(prev: Temperature) {
   }
 }
 
+function generatePrecipitation() {
+  const result = Math.random();
+  if (result < 0.1) {
+    return Precipitation.None;
+  } else if (result < 0.6) {
+    return Precipitation.Light;
+  } else if (result < 0.8) {
+    return Precipitation.Moderate;
+  } else if (result < 0.9) {
+    return Precipitation.Heavy;
+  } else {
+    return Precipitation.Severe;
+  }
+}
+
 export function generateWeather(weatherLastWeek?: Weather): Weather {
   if (!weatherLastWeek) {
     weatherLastWeek = startingWeather;
@@ -134,7 +149,7 @@ export function generateWeather(weatherLastWeek?: Weather): Weather {
   const newWeather: Weather = {
     ...weatherLastWeek,
     temperature: generateTempChange(weatherLastWeek.temperature),
-    precipitation: Math.floor(Math.random() * 5)
+    precipitation: generatePrecipitation()
   };
   if (
     weatherLastWeek.precipitation > Precipitation.Heavy &&
