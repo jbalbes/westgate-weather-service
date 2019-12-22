@@ -60,4 +60,12 @@ client.on("message", msg => {
   }
 });
 
+client.on("reconnecting", () => {
+  console.log("Attempting reconnect");
+});
+
+client.on("error", e => {
+  console.log(e.message);
+});
+
 client.login(config.token);
