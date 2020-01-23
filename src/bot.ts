@@ -3,6 +3,7 @@ import { config } from "./auth";
 import { messages } from "./messages";
 import { generateWeather, Weather, translateWeather } from "./generateWeather";
 import { existsSync, writeFileSync, readFileSync } from "fs";
+import { schedule } from "node-cron";
 
 const client = new Client();
 
@@ -69,3 +70,11 @@ client.on("error", e => {
 });
 
 client.login(config.token);
+
+schedule("0 2 * * 2", function() {
+  updateWeather(getWeather());
+  messageChannel(
+    Channels.General,
+    `Weather update: ` + translateWeather(getWeather())
+  );
+});
