@@ -1,7 +1,14 @@
 import { Client, Channel, TextChannel } from "discord.js";
 import { config } from "./auth";
 import { messages } from "./messages";
-import { generateWeather, Weather, translateWeather } from "./generateWeather";
+import {
+  generateWeather,
+  Weather,
+  translateWeather,
+  Temperature,
+  Precipitation,
+  Saturation
+} from "./generateWeather";
 import { existsSync, writeFileSync, readFileSync } from "fs";
 import { schedule } from "node-cron";
 
@@ -22,7 +29,11 @@ function getWeather(): Weather {
 }
 
 function updateWeather(weather: Weather) {
-  writeFileSync("./weather.json", JSON.stringify(generateWeather(weather)));
+  saveWeather(generateWeather(weather));
+}
+
+function saveWeather(weather: Weather) {
+  writeFileSync("./weather.json", JSON.stringify(weather));
 }
 
 function messageChannel(channel: string, msg: string) {
@@ -58,6 +69,89 @@ client.on("message", msg => {
         ? " " + messages.dmHelp
         : "");
     msg.reply(reply);
+  } else if (
+    msg.content === "!weathersay " &&
+    isTextChannel(msg.channel) &&
+    msg.channel.name === Channels.DMs
+  ) {
+    const message = msg.content.substr("!weathersay ".length);
+    messageChannel(Channels.General, message);
+  } else if (
+    msg.content.startsWith("!weatherannounce") &&
+    isTextChannel(msg.channel) &&
+    msg.channel.name === Channels.DMs
+  ) {
+    messageChannel(
+      Channels.General,
+      `Weather update: ` + translateWeather(getWeather())
+    );
+  } else if (
+    msg.content.startsWith("!weatherset ") &&
+    isTextChannel(msg.channel) &&
+    msg.channel.name === Channels.DMs
+  ) {
+    const newWeather = msg.content.substr("!weatherset ".length).split(" ");
+    if (newWeather.length != 2) {
+      msg.reply("Must supply weather condition and new value");
+      return;
+    }
+    if (newWeather[0] === "precipitation") {
+      const newPrecip = Precipitation[newWeather[1].toUpperCase()];
+      if (newPrecip !== undefined) {
+        saveWeather({
+          ...getWeather(),
+          precipitation: newPrecip
+        });
+      } else {
+        msg.reply(
+          `Unknown option ${newWeather[1]}, options are ${Object.keys(
+            Precipitation
+          )
+            .filter(v => isNaN(parseInt(v, 10)))
+            .map(v => v.toLowerCase())}`
+        );
+        return;
+      }
+    } else if (newWeather[0] === "temperature") {
+      const newTemp = Temperature[newWeather[1].toUpperCase()];
+      if (newTemp !== undefined) {
+        saveWeather({
+          ...getWeather(),
+          temperature: newTemp
+        });
+      } else {
+        msg.reply(
+          `Unknown option ${newWeather[1]}, options are ${Object.keys(
+            Temperature
+          )
+            .filter(v => isNaN(parseInt(v, 10)))
+            .map(v => v.toLowerCase())}`
+        );
+        return;
+      }
+    } else if (newWeather[0] === "saturation") {
+      const newSat = Saturation[newWeather[1].toUpperCase()];
+      if (newSat !== undefined) {
+        saveWeather({
+          ...getWeather(),
+          saturation: newSat
+        });
+      } else {
+        msg.reply(
+          `Unknown option ${newWeather[1]}, options are ${Object.keys(
+            Saturation
+          )
+            .filter(v => isNaN(parseInt(v, 10)))
+            .map(v => v.toLowerCase())}`
+        );
+        return;
+      }
+    } else {
+      msg.reply(
+        `Unknown option '${newWeather[0]}', options are precipitation,temperature,saturation`
+      );
+      return;
+    }
   }
 });
 

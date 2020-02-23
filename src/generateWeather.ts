@@ -1,51 +1,51 @@
 export enum Temperature {
-  Scorching, // 100+
-  Tropical, //  80 - 100
-  Temperate, //  60 - 80
-  Cold, // 40 - 60
-  Freezing, // 10 - 40
-  Arctic // 10-
+  SCORCHING, // 100+
+  TROPICAL, //  80 - 100
+  TEMPERATE, //  60 - 80
+  COLD, // 40 - 60
+  FREEZING, // 10 - 40
+  ARCTIC // 10-
 }
 
-export const TemperatureMap: Record<Temperature, string> = {
-  [Temperature.Scorching]: "scorching (100°F+)",
-  [Temperature.Tropical]: "tropical (80°F-100°F)",
-  [Temperature.Temperate]: "temperate (60°F-80°F)",
-  [Temperature.Cold]: "cold (30°F-60°F)",
-  [Temperature.Freezing]: "freezing (0°F-30°F)",
-  [Temperature.Arctic]: "arctic (0°F or below)"
+export const temperatureMap: Record<Temperature, string> = {
+  [Temperature.SCORCHING]: "scorching (100°F+)",
+  [Temperature.TROPICAL]: "tropical (80°F-100°F)",
+  [Temperature.TEMPERATE]: "temperate (60°F-80°F)",
+  [Temperature.COLD]: "cold (30°F-60°F)",
+  [Temperature.FREEZING]: "freezing (0°F-30°F)",
+  [Temperature.ARCTIC]: "arctic (0°F or below)"
 };
 
 export enum Precipitation {
-  None,
-  Light,
-  Moderate,
-  Heavy,
-  Severe
+  NONE,
+  LIGHT,
+  MODERATE,
+  HEAVY,
+  SEVERE
 }
 
 export const PrecipitationMap: Record<Precipitation, string> = {
-  [Precipitation.None]: "none",
-  [Precipitation.Light]: "light",
-  [Precipitation.Moderate]: "moderate",
-  [Precipitation.Heavy]: "heavy",
-  [Precipitation.Severe]: "severe"
+  [Precipitation.NONE]: "none",
+  [Precipitation.LIGHT]: "light",
+  [Precipitation.MODERATE]: "moderate",
+  [Precipitation.HEAVY]: "heavy",
+  [Precipitation.SEVERE]: "severe"
 };
 
 export enum Saturation {
-  SevereDrought,
-  MildDrought,
-  Normal,
-  MildFlooding,
-  SevereFlooding
+  SEVERE_DROUGHT,
+  MILD_DROUGHT,
+  NORMAL,
+  MILD_FLOODING,
+  SEVERE_FLOODING
 }
 
 export const saturationMap: Record<Saturation, string> = {
-  [Saturation.SevereDrought]: "severe drought",
-  [Saturation.MildDrought]: "mild drought",
-  [Saturation.Normal]: "normal",
-  [Saturation.MildFlooding]: "mild flooding",
-  [Saturation.SevereFlooding]: "severe flooding"
+  [Saturation.SEVERE_DROUGHT]: "severe drought",
+  [Saturation.MILD_DROUGHT]: "mild drought",
+  [Saturation.NORMAL]: "normal",
+  [Saturation.MILD_FLOODING]: "mild flooding",
+  [Saturation.SEVERE_FLOODING]: "severe flooding"
 };
 
 export interface Weather {
@@ -55,30 +55,28 @@ export interface Weather {
 }
 
 const startingWeather: Weather = {
-  temperature: Temperature.Freezing,
-  precipitation: Precipitation.Heavy,
-  saturation: Saturation.Normal
+  temperature: Temperature.FREEZING,
+  precipitation: Precipitation.HEAVY,
+  saturation: Saturation.NORMAL
 };
 
 export function translateWeather(weather: Weather) {
   let message = "";
   message += `The temperature range is currently ${
-    TemperatureMap[weather.temperature]
+    temperatureMap[weather.temperature]
   }.`;
-  const type = weather.temperature > Temperature.Cold ? "snow" : "rain";
-  if (weather.precipitation === Precipitation.None) {
+  const type = weather.temperature > Temperature.COLD ? "snow" : "rain";
+  if (weather.precipitation === Precipitation.NONE) {
     message += ` Expect clear skies`;
-  } else if (weather.precipitation < Precipitation.Heavy) {
+  } else if (weather.precipitation < Precipitation.HEAVY) {
     message += ` Expect ${PrecipitationMap[weather.precipitation]} ${type}.`;
   } else {
     message += ` Expect ${
       PrecipitationMap[weather.precipitation]
     } ${type} storms.`;
   }
-  if (weather.saturation != Saturation.Normal) {
-    const level =
-      weather.saturation < Saturation.Normal ? "a lack" : "an excess";
-    message += ` Due to ${level} of precipitation, we are currently experiencing ${
+  if (weather.saturation != Saturation.NORMAL) {
+    message += ` We are currently experiencing ${
       saturationMap[weather.saturation]
     }.`;
   }
@@ -88,57 +86,57 @@ export function translateWeather(weather: Weather) {
 function generateTempChange(prev: Temperature) {
   const result = Math.random();
   switch (prev) {
-    case Temperature.Arctic:
-      return result < 0.2 ? Temperature.Arctic : Temperature.Freezing;
-    case Temperature.Freezing:
+    case Temperature.ARCTIC:
+      return result < 0.2 ? Temperature.ARCTIC : Temperature.FREEZING;
+    case Temperature.FREEZING:
       if (result < 0.2) {
-        return Temperature.Arctic;
+        return Temperature.ARCTIC;
       } else if (result < 0.6) {
-        return Temperature.Freezing;
+        return Temperature.FREEZING;
       } else {
-        return Temperature.Cold;
+        return Temperature.COLD;
       }
-    case Temperature.Cold:
+    case Temperature.COLD:
       if (result < 0.2) {
-        return Temperature.Freezing;
+        return Temperature.FREEZING;
       } else if (result < 0.8) {
-        return Temperature.Cold;
+        return Temperature.COLD;
       } else {
-        return Temperature.Temperate;
+        return Temperature.TEMPERATE;
       }
-    case Temperature.Temperate:
+    case Temperature.TEMPERATE:
       if (result < 0.2) {
-        return Temperature.Cold;
+        return Temperature.COLD;
       } else if (result < 0.8) {
-        return Temperature.Temperate;
+        return Temperature.TEMPERATE;
       } else {
-        return Temperature.Tropical;
+        return Temperature.TROPICAL;
       }
-    case Temperature.Tropical:
+    case Temperature.TROPICAL:
       if (result < 0.4) {
-        return Temperature.Temperate;
+        return Temperature.TEMPERATE;
       } else if (result < 0.8) {
-        return Temperature.Tropical;
+        return Temperature.TROPICAL;
       } else {
-        return Temperature.Scorching;
+        return Temperature.SCORCHING;
       }
-    case Temperature.Scorching:
-      return result < 0.2 ? Temperature.Scorching : Temperature.Tropical;
+    case Temperature.SCORCHING:
+      return result < 0.2 ? Temperature.SCORCHING : Temperature.TROPICAL;
   }
 }
 
 function generatePrecipitation() {
   const result = Math.random();
   if (result < 0.1) {
-    return Precipitation.None;
+    return Precipitation.NONE;
   } else if (result < 0.6) {
-    return Precipitation.Light;
+    return Precipitation.LIGHT;
   } else if (result < 0.8) {
-    return Precipitation.Moderate;
+    return Precipitation.MODERATE;
   } else if (result < 0.9) {
-    return Precipitation.Heavy;
+    return Precipitation.HEAVY;
   } else {
-    return Precipitation.Severe;
+    return Precipitation.SEVERE;
   }
 }
 
@@ -152,20 +150,20 @@ export function generateWeather(weatherLastWeek?: Weather): Weather {
     precipitation: generatePrecipitation()
   };
   if (
-    weatherLastWeek.precipitation > Precipitation.Heavy &&
-    newWeather.precipitation > Precipitation.Heavy &&
+    weatherLastWeek.precipitation > Precipitation.HEAVY &&
+    newWeather.precipitation > Precipitation.HEAVY &&
     newWeather.saturation < 4
   ) {
     newWeather.saturation++;
   } else if (
-    weatherLastWeek.precipitation < Precipitation.Light &&
-    newWeather.precipitation < Precipitation.Light &&
+    weatherLastWeek.precipitation < Precipitation.LIGHT &&
+    newWeather.precipitation < Precipitation.LIGHT &&
     newWeather.saturation > 0
   ) {
     newWeather.saturation--;
-  } else if (newWeather.saturation > Saturation.Normal) {
+  } else if (newWeather.saturation > Saturation.NORMAL) {
     newWeather.saturation--;
-  } else if (newWeather.saturation < Saturation.Normal) {
+  } else if (newWeather.saturation < Saturation.NORMAL) {
     newWeather.saturation++;
   }
   return newWeather;
