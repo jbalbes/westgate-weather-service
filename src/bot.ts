@@ -70,14 +70,14 @@ client.on("message", msg => {
         : "");
     msg.reply(reply);
   } else if (
-    msg.content === "!weathersay " &&
+    msg.content.startsWith("!weathersay ") &&
     isTextChannel(msg.channel) &&
     msg.channel.name === Channels.DMs
   ) {
     const message = msg.content.substr("!weathersay ".length);
     messageChannel(Channels.General, message);
   } else if (
-    msg.content.startsWith("!weatherannounce") &&
+    msg.content === "!weatherannounce" &&
     isTextChannel(msg.channel) &&
     msg.channel.name === Channels.DMs
   ) {
