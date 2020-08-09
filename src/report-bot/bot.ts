@@ -63,7 +63,7 @@ async function shamePlayers() {
   messageChannel(
     client,
     Channels.General,
-    `The following players participated in a session that has an overdue report:
+    `Lolth whispers to me that the following players participated in a session that has an overdue report:
 ${overduePlayers}
 The overdue sessions are:
 ${overdueSessions
