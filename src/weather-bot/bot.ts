@@ -1,4 +1,4 @@
-import { Client, Channel, TextChannel } from "discord.js";
+import { Client } from "discord.js";
 import { config } from "./auth";
 import { messages } from "./messages";
 import {
@@ -7,19 +7,13 @@ import {
   translateWeather,
   Temperature,
   Precipitation,
-  Saturation
+  Saturation,
 } from "./generateWeather";
 import { existsSync, writeFileSync, readFileSync } from "fs";
 import { schedule } from "node-cron";
+import { isTextChannel, Channels, messageChannel } from "../common/utils";
 
 const client = new Client();
-
-enum Channels {
-  General = "general-chat",
-  DMs = "dms"
-}
-
-const isTextChannel = (c: Channel): c is TextChannel => c.type === "text";
 
 function getWeather(): Weather {
   if (!existsSync("./weather.json")) {
@@ -36,19 +30,11 @@ function saveWeather(weather: Weather) {
   writeFileSync("./weather.json", JSON.stringify(weather));
 }
 
-function messageChannel(channel: string, msg: string) {
-  client.channels
-    .filter(c => isTextChannel(c) && c.name === channel)
-    .forEach((c: TextChannel) => {
-      c.send(msg);
-    });
-}
-
 client.on("ready", () => {
   console.log(`Logged in as ${client.user.tag}!`);
 });
 
-client.on("message", msg => {
+client.on("message", (msg) => {
   if (msg.content === "!weather") {
     msg.reply(translateWeather(getWeather()));
   } else if (
@@ -59,6 +45,7 @@ client.on("message", msg => {
     updateWeather(getWeather());
     msg.reply("Weather updated!");
     messageChannel(
+      client,
       Channels.General,
       `Weather update: ` + translateWeather(getWeather())
     );
@@ -75,13 +62,14 @@ client.on("message", msg => {
     msg.channel.name === Channels.DMs
   ) {
     const message = msg.content.substr("!weathersay ".length);
-    messageChannel(Channels.General, message);
+    messageChannel(client, Channels.General, message);
   } else if (
     msg.content === "!weatherannounce" &&
     isTextChannel(msg.channel) &&
     msg.channel.name === Channels.DMs
   ) {
     messageChannel(
+      client,
       Channels.General,
       `Weather update: ` + translateWeather(getWeather())
     );
@@ -100,15 +88,15 @@ client.on("message", msg => {
       if (newPrecip !== undefined) {
         saveWeather({
           ...getWeather(),
-          precipitation: newPrecip
+          precipitation: newPrecip,
         });
       } else {
         msg.reply(
           `Unknown option ${newWeather[1]}, options are ${Object.keys(
             Precipitation
           )
-            .filter(v => isNaN(parseInt(v, 10)))
-            .map(v => v.toLowerCase())}`
+            .filter((v) => isNaN(parseInt(v, 10)))
+            .map((v) => v.toLowerCase())}`
         );
         return;
       }
@@ -117,15 +105,15 @@ client.on("message", msg => {
       if (newTemp !== undefined) {
         saveWeather({
           ...getWeather(),
-          temperature: newTemp
+          temperature: newTemp,
         });
       } else {
         msg.reply(
           `Unknown option ${newWeather[1]}, options are ${Object.keys(
             Temperature
           )
-            .filter(v => isNaN(parseInt(v, 10)))
-            .map(v => v.toLowerCase())}`
+            .filter((v) => isNaN(parseInt(v, 10)))
+            .map((v) => v.toLowerCase())}`
         );
         return;
       }
@@ -134,15 +122,15 @@ client.on("message", msg => {
       if (newSat !== undefined) {
         saveWeather({
           ...getWeather(),
-          saturation: newSat
+          saturation: newSat,
         });
       } else {
         msg.reply(
           `Unknown option ${newWeather[1]}, options are ${Object.keys(
             Saturation
           )
-            .filter(v => isNaN(parseInt(v, 10)))
-            .map(v => v.toLowerCase())}`
+            .filter((v) => isNaN(parseInt(v, 10)))
+            .map((v) => v.toLowerCase())}`
         );
         return;
       }
@@ -159,15 +147,16 @@ client.on("reconnecting", () => {
   console.log("Attempting reconnect");
 });
 
-client.on("error", e => {
+client.on("error", (e) => {
   console.log(e.message);
 });
 
 client.login(config.token);
 
-schedule("0 2 * * 2", function() {
+schedule("0 2 * * 2", function () {
   updateWeather(getWeather());
   messageChannel(
+    client,
     Channels.General,
     `Weather update: ` + translateWeather(getWeather())
   );

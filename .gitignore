@@ -3,3 +3,7 @@ node_modules
 dist
 config.json
 weather.json
+config.weather.json
+config.report.json
+credentials.json
+token.json
