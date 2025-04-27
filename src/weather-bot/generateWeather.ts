@@ -8,12 +8,12 @@ export enum Temperature {
 }
 
 export const temperatureMap: Record<Temperature, string> = {
-  [Temperature.SCORCHING]: "scorching (100°F+)",
-  [Temperature.TROPICAL]: "tropical (80°F-100°F)",
-  [Temperature.TEMPERATE]: "temperate (60°F-80°F)",
-  [Temperature.COLD]: "cold (30°F-60°F)",
-  [Temperature.FREEZING]: "freezing (0°F-30°F)",
-  [Temperature.ARCTIC]: "arctic (0°F or below)",
+  [Temperature.SCORCHING]: 'scorching (100°F+)',
+  [Temperature.TROPICAL]: 'tropical (80°F-100°F)',
+  [Temperature.TEMPERATE]: 'temperate (60°F-80°F)',
+  [Temperature.COLD]: 'cold (30°F-60°F)',
+  [Temperature.FREEZING]: 'freezing (0°F-30°F)',
+  [Temperature.ARCTIC]: 'arctic (0°F or below)',
 };
 
 export enum Precipitation {
@@ -24,12 +24,12 @@ export enum Precipitation {
   SEVERE,
 }
 
-export const PrecipitationMap: Record<Precipitation, string> = {
-  [Precipitation.NONE]: "none",
-  [Precipitation.LIGHT]: "light",
-  [Precipitation.MODERATE]: "moderate",
-  [Precipitation.HEAVY]: "heavy",
-  [Precipitation.SEVERE]: "severe",
+export const precipitationMap: Record<Precipitation, string> = {
+  [Precipitation.NONE]: 'none',
+  [Precipitation.LIGHT]: 'light',
+  [Precipitation.MODERATE]: 'moderate',
+  [Precipitation.HEAVY]: 'heavy',
+  [Precipitation.SEVERE]: 'severe',
 };
 
 export enum Saturation {
@@ -41,11 +41,11 @@ export enum Saturation {
 }
 
 export const saturationMap: Record<Saturation, string> = {
-  [Saturation.SEVERE_DROUGHT]: "severe drought",
-  [Saturation.MILD_DROUGHT]: "mild drought",
-  [Saturation.NORMAL]: "normal",
-  [Saturation.MILD_FLOODING]: "mild flooding",
-  [Saturation.SEVERE_FLOODING]: "severe flooding",
+  [Saturation.SEVERE_DROUGHT]: 'severe drought',
+  [Saturation.MILD_DROUGHT]: 'mild drought',
+  [Saturation.NORMAL]: 'normal',
+  [Saturation.MILD_FLOODING]: 'mild flooding',
+  [Saturation.SEVERE_FLOODING]: 'severe flooding',
 };
 
 export interface Weather {
@@ -61,18 +61,18 @@ const startingWeather: Weather = {
 };
 
 export function translateWeather(weather: Weather) {
-  let message = "";
+  let message = '';
   message += `The temperature range is currently ${
     temperatureMap[weather.temperature]
   }.`;
-  const type = weather.temperature > Temperature.COLD ? "snow" : "rain";
+  const type = weather.temperature > Temperature.COLD ? 'snow' : 'rain';
   if (weather.precipitation === Precipitation.NONE) {
     message += ` Expect clear skies`;
   } else if (weather.precipitation < Precipitation.HEAVY) {
-    message += ` Expect ${PrecipitationMap[weather.precipitation]} ${type}.`;
+    message += ` Expect ${precipitationMap[weather.precipitation]} ${type}.`;
   } else {
     message += ` Expect ${
-      PrecipitationMap[weather.precipitation]
+      precipitationMap[weather.precipitation]
     } ${type} storms.`;
   }
   if (weather.saturation != Saturation.NORMAL) {

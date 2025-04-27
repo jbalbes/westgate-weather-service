@@ -1,4 +1,4 @@
-import { generateWeather, translateWeather } from "./generateWeather";
+import { generateWeather, translateWeather } from './generateWeather';
 
 let weather = generateWeather();
 for (let i = 0; i < 100; i++) {

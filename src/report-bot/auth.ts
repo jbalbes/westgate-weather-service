@@ -1,35 +1,35 @@
-import { google } from "googleapis";
-const fs = require("fs");
-const readline = require("readline");
-import { Config } from "../common/utils";
+import { google } from 'googleapis';
+const fs = require('fs');
+const readline = require('readline');
+import { Config } from '../common/utils';
 
-export const config: Config = require("../../config.report.json");
-const TOKEN_PATH = "token.json";
-const SCOPES = ["https://www.googleapis.com/auth/spreadsheets.readonly"];
+export const config: Config = require('../../config.report.json');
+const TOKEN_PATH = 'token.json';
+const SCOPES = ['https://www.googleapis.com/auth/spreadsheets.readonly'];
 
 function getNewToken(oAuth2Client, callback) {
   const authUrl = oAuth2Client.generateAuthUrl({
-    access_type: "offline",
+    access_type: 'offline',
     scope: SCOPES,
   });
-  console.log("Authorize this app by visiting this url:", authUrl);
+  console.log('Authorize this app by visiting this url:', authUrl);
   const rl = readline.createInterface({
     input: process.stdin,
     output: process.stdout,
   });
-  rl.question("Enter the code from that page here: ", (code) => {
+  rl.question('Enter the code from that page here: ', (code) => {
     rl.close();
     oAuth2Client.getToken(code, (err, token) => {
       if (err)
         return console.error(
-          "Error while trying to retrieve access token",
-          err
+          'Error while trying to retrieve access token',
+          err,
         );
       oAuth2Client.setCredentials(token);
       // Store the token to disk for later program executions
       fs.writeFile(TOKEN_PATH, JSON.stringify(token), (err) => {
         if (err) return console.error(err);
-        console.log("Token stored to", TOKEN_PATH);
+        console.log('Token stored to', TOKEN_PATH);
       });
       callback(oAuth2Client);
     });
@@ -41,7 +41,7 @@ export function authorize(credentials, callback) {
   const oAuth2Client = new google.auth.OAuth2(
     client_id,
     client_secret,
-    redirect_uris[0]
+    redirect_uris[0],
   );
 
   // Check if we have previously stored a token.

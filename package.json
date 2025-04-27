@@ -5,14 +5,15 @@
   "main": "bot.js",
   "author": "Jack Balbes",
   "dependencies": {
-    "@types/node": "^12.12.20",
-    "discord.js": "^11.5.1",
-    "googleapis": "^58.0.0",
+    "@types/node": "^22.15.2",
+    "discord.js": "^14.19.1",
+    "googleapis": "^148.0.0",
     "lodash": "^4.17.19",
-    "moment": "^2.27.0",
-    "node-cron": "^2.0.3",
+    "moment": "^2.30.1",
+    "node-cron": "^3.0.3",
     "npm-run-all": "^4.1.5",
-    "typescript": "^3.9.7"
+    "prettier": "^3.5.3",
+    "typescript": "^5.8.3"
   },
   "scripts": {
     "build": "tsc",
@@ -20,6 +21,7 @@
     "test-weather": "npm run build && node dist/weather-bot/testSim.js",
     "test-report": "npm run build && node dist/report-bot/testSheets.js",
     "start-report": "node dist/report-bot/bot.js",
-    "start": "npm run build && run-p start-weather start-report"
+    "start": "npm run build && npm run deploy-weather && run-p start-weather start-report",
+    "deploy-weather": "node scripts/deploy-weather.js"
   }
 }

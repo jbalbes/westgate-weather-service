@@ -1,3 +1,5 @@
 {
-  "token": "YOUR_TOKEN_HERE"
+  "token": "YOUR_TOKEN_HERE",
+  "clientId": "YOUR_CLIENT_ID_HERE",
+  "guildId": "YOUR_DISCORD_SERVER_ID_HERE"
 }

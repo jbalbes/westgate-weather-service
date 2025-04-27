@@ -1,4 +1,4 @@
-import { getSessions, getOverdueSessions, getPlayers } from "./sheets";
+import { getSessions, getOverdueSessions, getPlayers } from './sheets';
 
 getSessions()
   .then(getOverdueSessions)

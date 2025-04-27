@@ -1,11 +1,11 @@
-const fs = require("fs");
-const readline = require("readline");
-import { google } from "googleapis";
-import { authorize } from "./auth";
-import * as moment from "moment";
-import { findLastIndex, uniq } from "lodash";
+const fs = require('fs');
+const readline = require('readline');
+import { google } from 'googleapis';
+import { authorize } from './auth';
+import moment from 'moment';
+import { findLastIndex, uniq } from 'lodash';
 
-const credentials = require("../../credentials.json");
+const credentials = require('../../credentials.json');
 
 export interface Session {
   dm: string;
@@ -18,18 +18,18 @@ export interface Session {
 export function getSessions() {
   return new Promise<Session[]>((resolve, reject) => {
     authorize(credentials, (auth) => {
-      const sheets = google.sheets({ version: "v4", auth });
+      const sheets = google.sheets({ version: 'v4', auth });
       Promise.all([
         sheets.spreadsheets.values
           .get({
-            spreadsheetId: "181biXBsTnyfzUyLGvt3C0_kUlF67H_qtRVOvD0nMFPI",
-            range: "History!A:O",
+            spreadsheetId: '181biXBsTnyfzUyLGvt3C0_kUlF67H_qtRVOvD0nMFPI',
+            range: 'History!A:O',
           })
           .then((resp) => resp.data),
         sheets.spreadsheets.values
           .get({
-            spreadsheetId: "181biXBsTnyfzUyLGvt3C0_kUlF67H_qtRVOvD0nMFPI",
-            range: "Sheet1!A:O",
+            spreadsheetId: '181biXBsTnyfzUyLGvt3C0_kUlF67H_qtRVOvD0nMFPI',
+            range: 'Sheet1!A:O',
           })
           .then((resp) => resp.data),
       ])
@@ -40,11 +40,11 @@ export function getSessions() {
             .map((row) => ({
               dm: row[0],
               date: row[1].toString(),
-              players: row.slice(6, 12).filter((name) => name !== ""),
+              players: row.slice(6, 12).filter((name) => name !== ''),
               objective: row[12],
               reporter: row[13],
             }))
-            .filter((session) => session.date !== "Date")
+            .filter((session) => session.date !== 'Date'),
         )
         .then(resolve, reject);
     });
@@ -54,9 +54,9 @@ export function getSessions() {
 export function getOverdueSessions(sessions: Session[]) {
   const unreportedSessions = sessions.filter((session) => !session.reporter);
   const lastIndex = findLastIndex(unreportedSessions, (session: Session) => {
-    const today = moment().subtract(7, "days");
-    const sessionDate = moment(session.date, "M/D");
-    const difference = today.diff(sessionDate, "days");
+    const today = moment().subtract(7, 'days');
+    const sessionDate = moment(session.date, 'M/D');
+    const difference = today.diff(sessionDate, 'days');
     return difference > 0;
   });
   return unreportedSessions.slice(0, lastIndex + 1);
@@ -65,7 +65,7 @@ export function getOverdueSessions(sessions: Session[]) {
 export function getPlayers(sessions: Session[]): string[] {
   return uniq(
     sessions
-      .map((session) => session.players.map((player) => player.split(" ")[0]))
-      .reduce((prev, next) => [...prev, ...next], [])
+      .map((session) => session.players.map((player) => player.split(' ')[0]))
+      .reduce((prev, next) => [...prev, ...next], []),
   );
 }

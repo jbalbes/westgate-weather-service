@@ -1,21 +1,20 @@
-import { Channel, TextChannel, Client } from "discord.js";
+import { Channel, TextChannel, Client, ChannelType } from 'discord.js';
 
 export interface Config {
   token: string;
 }
 
 export enum Channels {
-  General = "general-chat",
-  DMs = "dms",
+  General = 'general-chat',
+  DMs = 'dms',
 }
 
 export const isTextChannel = (c: Channel): c is TextChannel =>
-  c.type === "text";
+  c.type === ChannelType.GuildText;
 
-export function messageChannel(client: Client, channel: string, msg: string) {
-  client.channels
-    .filter((c) => isTextChannel(c) && c.name === channel)
-    .forEach((c: TextChannel) => {
-      c.send(msg);
-    });
+export function messageChannel(client: Client, channelId: string, msg: string) {
+  const channel = client.channels.cache.get(channelId);
+  if (isTextChannel(channel)) {
+    channel.send(msg);
+  }
 }
